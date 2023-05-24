@@ -13,8 +13,8 @@ const char *password = "PASSWORD"; // isi dengan passwordnya wifi
 
 const char *host = " "; // isi dengan alamat web server 
 
-int m, sensor_analog;
-float t;
+int sensor_analog;
+float m, t;
 
 DHT dht(DHTPIN, DHTTYPE);
 
@@ -28,7 +28,7 @@ float readTemp(){
 }
 
 // Read soil moisture (in percentage) from FC28 resistive soil moisture sensor
-int readMoist() {
+float readMoist() {
   sensor_analog = analogRead(FC28PIN);
   m = (100 - ((sensor_analog/4095.00) * 100));
   Serial.print("Soil Moisture = ");
@@ -67,14 +67,26 @@ void loop() {
   HTTPClient http; //declare object of class HTTPClient
 
   //prepare data
-  String temperature, moisture, postData;
-  readTemp();
-  readMoist();
-  temperature = String(readTemp());
-  moisture = String(readMoist());
+  float temp_temperature, temp_moisture;
+  String temperature, moisture, condition, postData;
+  temp_temperature = readTemp();
+  temp_moisture = readMoist();
+  //checking soil condition based on temperature and moisture value
+  if(temp_temperature >= 11 && temp_temperature <= 30 && temp_moisture >= 20 && temp_moisture <= 60) {
+    condition = "Good";
+  } else if (temp_temperature >= 11 && temp_temperature <= 30 && temp_moisture <= 20 && temp_moisture >= 60) {
+    condition = "Average";
+  } else if (temp_temperature <= 11 && temp_temperature >= 30 && temp_moisture >= 20 && temp_moisture <= 60) {
+    condition = "Average";
+  } else if (temp_temperature <= 11 && temp_temperature >= 30 && temp_moisture <= 20 && temp_moisture >= 60) {
+    condition = "Bad";
+  }
+  Serial.println("Soil Condition = " + condition);
+  temperature = String(temp_temperature);
+  moisture = String(temp_moisture);
 
   //prepare request
-  postData = "temperature=" + temperature + "&moisture=" + moisture;
+  postData = "temperature=" + temperature + "&moisture=" + moisture + "&condition=" + condition;
   http.begin(host);
   //let server know that there's data
   http.addHeader("Content-Type", "application/x-www-form-urlencoded");
