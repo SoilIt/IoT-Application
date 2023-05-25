@@ -74,11 +74,11 @@ void loop() {
   //checking soil condition based on temperature and moisture value
   if(temp_temperature >= 11 && temp_temperature <= 30 && temp_moisture >= 20 && temp_moisture <= 60) {
     condition = "Good";
-  } else if (temp_temperature >= 11 && temp_temperature <= 30 && temp_moisture <= 20 && temp_moisture >= 60) {
+  } else if (temp_temperature >= 11 && temp_temperature <= 30 && temp_moisture < 20 && temp_moisture > 60) {
     condition = "Average";
-  } else if (temp_temperature <= 11 && temp_temperature >= 30 && temp_moisture >= 20 && temp_moisture <= 60) {
+  } else if (temp_temperature < 11 && temp_temperature > 30 && temp_moisture >= 20 && temp_moisture <= 60) {
     condition = "Average";
-  } else if (temp_temperature <= 11 && temp_temperature >= 30 && temp_moisture <= 20 && temp_moisture >= 60) {
+  } else if (temp_temperature < 11 && temp_temperature > 30 && temp_moisture < 20 && temp_moisture > 60) {
     condition = "Bad";
   }
   Serial.println("Soil Condition = " + condition);
